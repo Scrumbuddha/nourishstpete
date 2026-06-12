@@ -31,5 +31,16 @@ All data currently lives in `lib/data/` as TypeScript seed files:
 - `recipes.ts` — budget recipes
 
 Phase 2 moves this into Postgres with scheduled ingestion from USDA
-FoodData Central, the SNAP retailer dataset, and Open Food Facts, and adds
-the Claude-powered AI Food Coach (see the design doc).
+FoodData Central, the SNAP retailer dataset, and Open Food Facts.
+
+## AI Food Coach
+
+The `/coach` page requires an Anthropic API key. Create `.env.local` in the
+project root:
+
+```
+ANTHROPIC_API_KEY=your_key_here
+```
+
+Get a key at https://console.anthropic.com. The Finder, Swaps, and Recipes
+pages all work without it.
