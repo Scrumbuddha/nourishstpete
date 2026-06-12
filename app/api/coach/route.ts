@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { NextResponse } from "next/server";
 import { getRecipes, getSwaps, searchPlaces } from "@/lib/coach-tools";
 
-const MODEL = process.env.COACH_MODEL ?? "claude-opus-4-8";
+const MODEL = process.env.COACH_MODEL ?? "claude-sonnet-4-6";
 const MAX_TOOL_ITERATIONS = 5;
 const MAX_HISTORY_MESSAGES = 20;
 
@@ -16,7 +16,8 @@ Rules:
 - Plain language at roughly a 6th-grade reading level. Show money as dollars with context ("$0.42 per bowl").
 - You give general food information, not medical advice. For clinical questions (diabetes management, allergies, medication interactions), suggest they ask their doctor or a dietitian.
 - Never recommend restriction diets, fasting, or weight-loss targets.
-- Keep answers short and scannable. When listing places, include hours and what benefits they accept.`;
+- Keep answers short and scannable. When listing places, include hours and what benefits they accept.
+- Do not use markdown formatting — no bullet symbols, no asterisks, no headers. Write in plain sentences and short paragraphs.`;
 
 const tools: Anthropic.Tool[] = [
   {
@@ -156,7 +157,6 @@ export async function POST(request: Request) {
       response = await client.messages.create({
         model: MODEL,
         max_tokens: 2048,
-        thinking: { type: "adaptive" },
         system: SYSTEM_PROMPT,
         tools,
         messages,
