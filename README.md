@@ -3,8 +3,6 @@
 Web app that helps people in St. Petersburg find healthy food nearby and
 discover low-cost healthy alternatives to what they already buy.
 
-Full product design: [`../docs/design/nourish-stpete-app-design.md`](../docs/design/nourish-stpete-app-design.md)
-
 ## Features (Phase 1)
 
 - **Find Food** (`/finder`) — markets, pantries, groceries, and mobile markets,
