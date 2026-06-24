@@ -985,4 +985,18 @@ export const places: Place[] = [
     isFree: true,
     notes: "Known as 'Dolores' Food Pantry.' Offers food and personal hygiene items. Friday morning distribution. Church office hours (Mon–Fri) are separate from pantry hours — confirm pantry times before visiting. Church office: (727) 526-7460. Source: hope.mylutheran.org, Florida-Bahamas Synod.",
   },
+  {
+    id: "st-bedes-little-free-pantry",
+    name: "St. Bede's Episcopal Church — Little Free Pantry",
+    type: "food-pantry",
+    address: "2500 16th St N, Saint Petersburg, FL 33704",
+    lat: 27.7739,
+    lng: -82.6447,
+    hours: "24/7 (outdoor pantry on church porch)",
+    acceptsSnap: false,
+    acceptsWic: false,
+    acceptsFreshAccessBucks: false,
+    isFree: true,
+    notes: "Little Free Pantry mounted on church porch. Non-perishable food and hygiene products. 'Take what you need, leave what you can'—only unopened, unexpired items accepted. Part of national Little Free Pantry network. (727) 823-7649. Email: office@stbedeepiscopalchurch.org. Website: stbedeepiscopalchurch.org.",
+  },
 ];
