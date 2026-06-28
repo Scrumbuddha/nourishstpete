@@ -40,18 +40,21 @@ export function BenefitEligibilityChecker({
   const hasActiveFilters = Object.values(filters).some((v) => v);
 
   return (
-    <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+    <>
       <button
         onClick={() => onExpandChange(!isExpanded)}
-        className="flex w-full items-center justify-between text-left font-semibold text-blue-900"
+        className={`rounded-full border px-3 py-1.5 text-sm font-medium transition ${
+          isExpanded
+            ? "border-blue-700 bg-blue-700 text-white"
+            : "border-stone-300 bg-white text-stone-700 hover:border-blue-600"
+        }`}
         aria-expanded={isExpanded}
       >
-        <span>📋 Personalize Your Results</span>
-        <span className="text-lg">{isExpanded ? "−" : "+"}</span>
+        📋 Personalize Your Results
       </button>
 
       {isExpanded && (
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 rounded-lg border border-blue-200 bg-blue-50 p-4 space-y-3">
           <p className="text-sm text-blue-800">
             Tell us about yourself (optional). Your info stays on your phone — nothing is saved or shared.
           </p>
@@ -153,6 +156,6 @@ export function BenefitEligibilityChecker({
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
