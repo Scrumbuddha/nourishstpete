@@ -3,6 +3,9 @@
 import { useMemo, useState } from "react";
 import { places } from "@/lib/data/places";
 import type { Place, PlaceType } from "@/lib/types";
+import { BenefitEligibilityChecker, type EligibilityFilters } from "./benefit-checker";
+import { matchesEligibility } from "@/lib/eligibility-filter";
+import { isOpenNow } from "@/lib/open-now";
 
 const typeLabels: Record<PlaceType, string> = {
   grocery: "Grocery",
@@ -53,13 +56,38 @@ function Badge({ children, tone }: { children: string; tone: "green" | "blue" | 
 export default function FinderPage() {
   const [benefit, setBenefit] = useState<BenefitFilter>("all");
   const [type, setType] = useState<PlaceType | "all">("all");
+  const [eligibilityFilters, setEligibilityFilters] = useState<EligibilityFilters>({
+    hasSNAP: false,
+    hasWIC: false,
+    isStudent: false,
+    isSenior: false,
+    isFormerlyIncarcerated: false,
+    needsNoID: false,
+  });
+  const [showOpenNow, setShowOpenNow] = useState(false);
+  const [checkerExpanded, setCheckerExpanded] = useState(false);
 
   const results = useMemo(
     () =>
-      places.filter(
-        (p) => matchesBenefit(p, benefit) && (type === "all" || p.type === type)
-      ),
-    [benefit, type]
+      places.filter((p) => {
+        // Apply benefit filter
+        if (!matchesBenefit(p, benefit)) return false;
+
+        // Apply type filter
+        if (type !== "all" && p.type !== type) return false;
+
+        // Apply eligibility filters
+        if (!matchesEligibility(p, eligibilityFilters)) return false;
+
+        // Apply "Open Now" filter
+        if (showOpenNow) {
+          const openStatus = isOpenNow(p.hours);
+          if (openStatus !== true) return false;
+        }
+
+        return true;
+      }),
+    [benefit, type, eligibilityFilters, showOpenNow]
   );
 
   return (
@@ -71,6 +99,12 @@ export default function FinderPage() {
           — no paperwork needed at most.
         </p>
       </div>
+
+      <BenefitEligibilityChecker
+        onFiltersChange={setEligibilityFilters}
+        isExpanded={checkerExpanded}
+        onExpandChange={setCheckerExpanded}
+      />
 
       <div className="space-y-3">
         <div className="flex flex-wrap gap-2">
@@ -88,24 +122,47 @@ export default function FinderPage() {
             </button>
           ))}
         </div>
-        <select
-          value={type}
-          onChange={(e) => setType(e.target.value as PlaceType | "all")}
-          className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
-          aria-label="Filter by place type"
-        >
-          <option value="all">All place types</option>
-          {Object.entries(typeLabels).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={type}
+            onChange={(e) => setType(e.target.value as PlaceType | "all")}
+            className="rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm"
+            aria-label="Filter by place type"
+          >
+            <option value="all">All place types</option>
+            {Object.entries(typeLabels).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            onClick={() => setShowOpenNow(!showOpenNow)}
+            className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+              showOpenNow
+                ? "border-red-700 bg-red-700 text-white"
+                : "border-stone-300 bg-white text-stone-700 hover:border-red-600"
+            }`}
+            title="Show only places open right now"
+          >
+            {showOpenNow ? "🔴 Open Right Now" : "⭕ All Hours"}
+          </button>
+        </div>
       </div>
 
-      <p className="text-sm text-stone-500">
-        {results.length} place{results.length === 1 ? "" : "s"} found
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-stone-500">
+          {results.length} place{results.length === 1 ? "" : "s"} found
+          {showOpenNow && " (open right now)"}
+        </p>
+        {showOpenNow && (
+          <p className="text-xs text-red-600">
+            ⏰ Based on current time. Hours may vary—call ahead to confirm.
+          </p>
+        )}
+      </div>
 
       <ul className="space-y-3">
         {results.map((p) => (
